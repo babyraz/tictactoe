@@ -28,7 +28,7 @@ function initGlobalObject() {
 
     //Datastruktur för vilka platser som är lediga respektive har brickor
     //Genom at fylla i här med antingen X eler O kan ni testa era rättningsfunktioner 
-    oGameData.gameField = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
+    oGameData.gameField = ['X', 'O', 'X', 'O', 'X', 'O', 'O', 'X', 'O'];
     
     /* Testdata för att testa rättningslösning */
     //oGameData.gameField = ['X', 'X', 'X', '', '', '', '', '', ''];
@@ -79,37 +79,34 @@ function initGlobalObject() {
  * returnerar 3 om det är oavgjort.
  * Funktionen tar inte emot några värden.
  */
-function checkForGameOver() { 
-    if(checkForDraw() === false){
-        return 0;
-    } 
-    else if(checkWinner('X') === true){
+function checkForGameOver() {
+    if (checkWinner(oGameData.playerOne)) {
         return 1;
     }
-    else if(checkWinner('O')=== true){
+    if (checkWinner(oGameData.playerTwo)) {
         return 2;
     }
-    else if(checkForDraw() === true){
+    if (checkForDraw()) {
         return 3;
     }
-    
+    return 0;
 }
 
 // Säg till om ni vill få pseudokod för denna funktion
 // Viktigt att funktionen returnerar true eller false baserat på om den inskickade spelaren är winner eller ej
 function checkWinner(playerIn) {
     const winPatterns = [
-        [0,1,2],
-        [3,4,5],
-        [6,7,8],
-        [0,3,6],
-        [1,4,7],
-        [2,5,8],
-        [0,4,8],
-        [2,4,6],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
     ]
-    for (let pattern in winPatterns){
-        const [a,b,c,] = pattern;
+    for (let pattern of winPatterns){
+        const [a, b, c,] = pattern;
         if (oGameData.gameField[a] === playerIn &&
             oGameData.gameField[b] === playerIn &&
             oGameData.gameField[c] === playerIn){
