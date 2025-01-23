@@ -28,7 +28,7 @@ function initGlobalObject() {
 
     //Datastruktur för vilka platser som är lediga respektive har brickor
     //Genom at fylla i här med antingen X eler O kan ni testa era rättningsfunktioner 
-    oGameData.gameField = ['X', 'O', 'X', 'O', 'X', 'O', 'O', 'X', 'O'];
+    oGameData.gameField = ['', '', '', '', '', '', '', '', ''];
     
     /* Testdata för att testa rättningslösning */
     //oGameData.gameField = ['X', 'X', 'X', '', '', '', '', '', ''];
@@ -88,8 +88,9 @@ function checkForGameOver() {
     }
     if (checkForDraw()) {
         return 3;
-    }
+    } else {
     return 0;
+    }
 }
 
 // Säg till om ni vill få pseudokod för denna funktion
@@ -127,11 +128,80 @@ function checkForDraw() {
 }
 
 
+// Vet inte var jag ska lägga koden för att spara datan så jag lägger den här så länge
+
+// Kod för att spara namn och färger
+function savePlayerData() {
+    oGameData.nickNamePlayerOne = document.getElementById('nick1').value;
+    oGameData.nickNamePlayerTwo = document.getElementById('nick2').value;
+    oGameData.colorPlayerOne = document.getElementById('color1').value;
+    oGameData.colorPlayerTwo = document.getElementById('color2').value;
+}
+
+// Kod för att återställa spelplanen 
+function resetGameBoard() {
+    let emptyField = document.getElementsByTagName('td');
+
+    for (let i = 0; i < emptyField.length; i++) {
+        emptyField[i].innerText = "";
+        emptyField[i].style.backgroundColor = "#ffffff";
+    }
+}
+
+
+
+function startingPlayer() {
+    let randomNum = Math.random();
+
+    if (randomNum < 0.5) {
+        oGameData.currentPlayer = oGameData.nickNamePlayerOne;
+        console.log(`${oGameData.nickNamePlayerOne} börjar med symbolen X!`);
+    } else {
+        oGameData.currentPlayer = oGameData.nickNamePlayerTwo;
+        console.log(`${oGameData.nickNamePlayerTwo} börjar med symbolen O!`);
+    }
+
+    updateJumbotron();
+}
+
+function nextTurn(currentPlayer) { 
+    let playerChar;
+    let playerName;
+
+    if (oGameData.currentPlayer === oGameData.nickNamePlayerOne) {
+        playerChar = "X";
+        playerName = oGameData.nickNamePlayerOne;
+    } else {
+        playerChar = "O";
+        playerName = oGameData.nickNamePlayerTwo;
+    }
+
+    console.log(`Det är ${playerName}s tur att spela (${playerChar}).`);
+    updateJumbotron();
+}
+
+function updateJumbotron() {
+    let h1Element = document.querySelector('.jumbotron h1');
+
+    h1Element.innerText = `Aktuell spelare är ${oGameData.currentPlayer}`;
+}
+
+// anropa executeMove vid klick
+function prepTable() {
+    let gameTable = document.querySelector('table');
+
+    gameTable.addEventListener('click', executeMove);
+}
+
 
 // Nedanstående funktioner väntar vi med!
 
 function prepGame() {
+    let gameArea = document.getElementById('gameArea');
+    gameArea.classList.add('d-none'); // Göm spelplanen från början
 
+    let startClick = document.getElementById('newGame');
+    startClick.addEventListener("click", initiateGame); // Starta spelet
 }
 
 function validateForm() {
@@ -139,11 +209,55 @@ function validateForm() {
 }
 
 function initiateGame() {
+    let formElement = document.getElementById('theForm');
+    formElement.classList.add('d-none'); // Göm formuläret
 
+    let showArea = document.getElementById('gameArea');
+    showArea.classList.remove('d-none'); // Visa spelplanen
+
+    let removeText = document.getElementById('errorMsg');
+    removeText.innerText = '';  // Rensa textinnehåll
+
+    savePlayerData();
+    resetGameBoard();
+    startingPlayer();
+    nextTurn(oGameData.currentPlayer);
+
+    let gameTable = document.querySelector('table');
+    gameTable.addEventListener('click', executeMove);
 }
 
-function executeMove (event) {
 
+prepGame();
+
+function executeMove (event) {
+    if (event.target.tagName !== 'TD') {
+        return; // kontrollerar att det är en cell som klickas på
+    }
+    if (event.target.innerText !== "") {
+        return; // Gör inget om cellen redan är ifylld
+    }
+
+    let playerChar = oGameData.currentPlayer === oGameData.nickNamePlayerOne ? "X" : "O";
+    let playerColor = oGameData.currentPlayer === oGameData.nickNamePlayerOne ? oGameData.colorPlayerOne : oGameData.colorPlayerTwo;
+
+    event.target.innerText = playerChar;
+    event.target.style.backgroundColor = playerColor;
+
+    let cellId = parseInt(event.target.getAttribute('data-id'), 10);
+    oGameData.gameField[cellId] = playerChar;
+
+    oGameData.currentPlayer =
+    (oGameData.currentPlayer === oGameData.nickNamePlayerOne)
+    ? oGameData.nickNamePlayerTwo
+    : oGameData.nickNamePlayerOne
+
+    updateJumbotron();
+
+    let gameResult = checkForGameOver();
+    if (gameResult !== 0) {
+        gameOver(gameResult);
+    }
 }
 
 function changePlayer() {
@@ -155,5 +269,25 @@ function timer() {
 }
 
 function gameOver(result) {
+    let gameTable = document.querySelector('table');
+    gameTable.removeEventListener('click', executeMove);
 
+    let formElement = document.getElementById('theForm');
+    formElement.classList.remove('d-none'); 
+
+    let gameArea = document.getElementById('gameArea');
+    gameArea.classList.add('d-none');
+
+    let h1Element = document.querySelector('.jumbotron h1');
+    if (result === 1) {
+        h1Element.innerText = `${oGameData.nickNamePlayerOne} vinner! Spela igen?`;
+    } else if (result === 2) {
+        h1Element.innerText = `${oGameData.nickNamePlayerTwo} vinner! Spela igen?`;
+    } else if (result === 3) {
+        h1Element.innerText = `Oavgjort! spela igen?`;
+    }
+
+    initGlobalObject();
 }
+
+
