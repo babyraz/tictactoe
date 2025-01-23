@@ -8,15 +8,7 @@ let oGameData = {};
 
 window.addEventListener('load', () => {
     initGlobalObject();
-    if(checkForGameOver() === 1) {
-        console.log("Spelare 1 vann");        
-    } else if(checkForGameOver() === 2) {
-        console.log("Spelare 2 vann");
-    } else if(checkForGameOver() === 3) {
-        console.log("Oavgjort");
-    } else {
-        console.log("Spelet fortsätter");
-    }
+    prepGame();
 });
 
 /**
@@ -131,26 +123,26 @@ function checkForDraw() {
 // Vet inte var jag ska lägga koden för att spara datan så jag lägger den här så länge
 
 // Kod för att spara namn och färger
-function savePlayerData() {
+/*function savePlayerData() {
     oGameData.nickNamePlayerOne = document.getElementById('nick1').value;
     oGameData.nickNamePlayerTwo = document.getElementById('nick2').value;
     oGameData.colorPlayerOne = document.getElementById('color1').value;
     oGameData.colorPlayerTwo = document.getElementById('color2').value;
-}
+}*/
 
 // Kod för att återställa spelplanen 
-function resetGameBoard() {
+/*function resetGameBoard() {
     let emptyField = document.getElementsByTagName('td');
 
     for (let i = 0; i < emptyField.length; i++) {
         emptyField[i].innerText = "";
         emptyField[i].style.backgroundColor = "#ffffff";
     }
-}
+}*/
 
 
 
-function startingPlayer() {
+/*function startingPlayer() {
     let randomNum = Math.random();
 
     if (randomNum < 0.5) {
@@ -162,9 +154,9 @@ function startingPlayer() {
     }
 
     updateJumbotron();
-}
+}*/
 
-function nextTurn(currentPlayer) { 
+/*function nextTurn(currentPlayer) { 
     let playerChar;
     let playerName;
 
@@ -178,13 +170,13 @@ function nextTurn(currentPlayer) {
 
     console.log(`Det är ${playerName}s tur att spela (${playerChar}).`);
     updateJumbotron();
-}
+}*/
 
-function updateJumbotron() {
+/*function updateJumbotron() {
     let h1Element = document.querySelector('.jumbotron h1');
 
     h1Element.innerText = `Aktuell spelare är ${oGameData.currentPlayer}`;
-}
+}*/
 
 // anropa executeMove vid klick
 function prepTable() {
@@ -218,10 +210,55 @@ function initiateGame() {
     let removeText = document.getElementById('errorMsg');
     removeText.innerText = '';  // Rensa textinnehåll
 
-    savePlayerData();
-    resetGameBoard();
-    startingPlayer();
-    nextTurn(oGameData.currentPlayer);
+    //savePlayerData();
+    oGameData.nickNamePlayerOne = document.getElementById('nick1').value;
+    oGameData.nickNamePlayerTwo = document.getElementById('nick2').value;
+    oGameData.colorPlayerOne = document.getElementById('color1').value;
+    oGameData.colorPlayerTwo = document.getElementById('color2').value;
+
+    //resetGameBoard();
+    let emptyField = document.getElementsByTagName('td');
+
+    for (let i = 0; i < emptyField.length; i++) {
+        emptyField[i].innerText = "";
+        emptyField[i].style.backgroundColor = "#ffffff";
+    }
+
+    //startingPlayer();
+    let randomNum = Math.random();
+
+    if (randomNum < 0.5) {
+        oGameData.currentPlayer = oGameData.nickNamePlayerOne;
+        console.log(`${oGameData.nickNamePlayerOne} börjar med symbolen X!`);
+    } else {
+        oGameData.currentPlayer = oGameData.nickNamePlayerTwo;
+        console.log(`${oGameData.nickNamePlayerTwo} börjar med symbolen O!`);
+    }
+
+    //updateJumbotron();
+    let h1Element = document.querySelector('.jumbotron h1');
+
+    h1Element.innerText = `Aktuell spelare är ${oGameData.currentPlayer}`;
+
+
+
+    //nextTurn(oGameData.currentPlayer);
+    let playerChar;
+    let playerName;
+
+    if (oGameData.currentPlayer === oGameData.nickNamePlayerOne) {
+        playerChar = "X";
+        playerName = oGameData.nickNamePlayerOne;
+    } else {
+        playerChar = "O";
+        playerName = oGameData.nickNamePlayerTwo;
+    }
+
+    console.log(`Det är ${playerName}s tur att spela (${playerChar}).`);
+    //updateJumbotron();
+    h1Element = document.querySelector('.jumbotron h1');
+
+    h1Element.innerText = `Aktuell spelare är ${oGameData.currentPlayer}`;
 
     let gameTable = document.querySelector('table');
     gameTable.addEventListener('click', executeMove);
@@ -252,7 +289,10 @@ function executeMove (event) {
     ? oGameData.nickNamePlayerTwo
     : oGameData.nickNamePlayerOne
 
-    updateJumbotron();
+    //updateJumbotron();
+    let h1Element = document.querySelector('.jumbotron h1');
+
+    h1Element.innerText = `Aktuell spelare är ${oGameData.currentPlayer}`;
 
     let gameResult = checkForGameOver();
     if (gameResult !== 0) {
@@ -289,5 +329,3 @@ function gameOver(result) {
 
     initGlobalObject();
 }
-
-
