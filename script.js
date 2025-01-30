@@ -120,70 +120,6 @@ function checkForDraw() {
 }
 
 
-// Vet inte var jag ska lägga koden för att spara datan så jag lägger den här så länge
-
-// Kod för att spara namn och färger
-/*function savePlayerData() {
-    oGameData.nickNamePlayerOne = document.getElementById('nick1').value;
-    oGameData.nickNamePlayerTwo = document.getElementById('nick2').value;
-    oGameData.colorPlayerOne = document.getElementById('color1').value;
-    oGameData.colorPlayerTwo = document.getElementById('color2').value;
-}*/
-
-// Kod för att återställa spelplanen 
-/*function resetGameBoard() {
-    let emptyField = document.getElementsByTagName('td');
-
-    for (let i = 0; i < emptyField.length; i++) {
-        emptyField[i].innerText = "";
-        emptyField[i].style.backgroundColor = "#ffffff";
-    }
-}*/
-
-
-
-/*function startingPlayer() {
-    let randomNum = Math.random();
-
-    if (randomNum < 0.5) {
-        oGameData.currentPlayer = oGameData.nickNamePlayerOne;
-        console.log(`${oGameData.nickNamePlayerOne} börjar med symbolen X!`);
-    } else {
-        oGameData.currentPlayer = oGameData.nickNamePlayerTwo;
-        console.log(`${oGameData.nickNamePlayerTwo} börjar med symbolen O!`);
-    }
-
-    updateJumbotron();
-}*/
-
-/*function nextTurn(currentPlayer) { 
-    let playerChar;
-    let playerName;
-
-    if (oGameData.currentPlayer === oGameData.nickNamePlayerOne) {
-        playerChar = "X";
-        playerName = oGameData.nickNamePlayerOne;
-    } else {
-        playerChar = "O";
-        playerName = oGameData.nickNamePlayerTwo;
-    }
-
-    console.log(`Det är ${playerName}s tur att spela (${playerChar}).`);
-    updateJumbotron();
-}*/
-
-/*function updateJumbotron() {
-    let h1Element = document.querySelector('.jumbotron h1');
-
-    h1Element.innerText = `Aktuell spelare är ${oGameData.currentPlayer}`;
-}*/
-
-// anropa executeMove vid klick
-function prepTable() {
-    let gameTable = document.querySelector('table');
-
-    gameTable.addEventListener('click', executeMove);
-}
 
 
 // Nedanstående funktioner väntar vi med!
@@ -193,12 +129,13 @@ function prepGame() {
     gameArea.classList.add('d-none'); // Göm spelplanen från början
 
     let startClick = document.getElementById('newGame');
-    startClick.addEventListener("click", initiateGame); // Starta spelet
+    startClick.addEventListener("click", function() {
+        if (validateForm()) {
+            initiateGame();
+        }
+    });
 }
 
-function validateForm() {
-    
-}
 
 function initiateGame() {
     let formElement = document.getElementById('theForm');
@@ -210,11 +147,7 @@ function initiateGame() {
     let removeText = document.getElementById('errorMsg');
     removeText.innerText = '';  // Rensa textinnehåll
 
-    //savePlayerData();
-    oGameData.nickNamePlayerOne = document.getElementById('nick1').value;
-    oGameData.nickNamePlayerTwo = document.getElementById('nick2').value;
-    oGameData.colorPlayerOne = document.getElementById('color1').value;
-    oGameData.colorPlayerTwo = document.getElementById('color2').value;
+   
 
     //resetGameBoard();
     let emptyField = document.getElementsByTagName('td');
@@ -265,7 +198,7 @@ function initiateGame() {
 }
 
 
-prepGame();
+//prepGame();
 
 function executeMove (event) {
     if (event.target.tagName !== 'TD') {
@@ -281,8 +214,10 @@ function executeMove (event) {
     event.target.innerText = playerChar;
     event.target.style.backgroundColor = playerColor;
 
+    // lägg till dataset istället
     let cellId = parseInt(event.target.getAttribute('data-id'), 10);
     oGameData.gameField[cellId] = playerChar;
+    
 
     oGameData.currentPlayer =
     (oGameData.currentPlayer === oGameData.nickNamePlayerOne)
@@ -300,13 +235,11 @@ function executeMove (event) {
     }
 }
 
-function changePlayer() {
+/*function changePlayer() {
 
-}
+}*/
 
-function timer() {
 
-}
 
 function gameOver(result) {
     let gameTable = document.querySelector('table');
@@ -328,4 +261,38 @@ function gameOver(result) {
     }
 
     initGlobalObject();
+}
+
+
+function validateForm() {
+    oGameData.nickNamePlayerOne = document.getElementById('nick1').value;
+    oGameData.nickNamePlayerTwo = document.getElementById('nick2').value;
+    oGameData.colorPlayerOne = document.getElementById('color1').value;
+    oGameData.colorPlayerTwo = document.getElementById('color2').value;
+
+    console.log(`Color Player One: ${oGameData.colorPlayerOne}`);
+    console.log(`Color Player Two: ${oGameData.colorPlayerTwo}`);
+
+    if (oGameData.nickNamePlayerOne.length < 3 || oGameData.nickNamePlayerTwo.length < 3) {
+        alert('Användarnamnen får inte understiga 3 bokstäver');
+        return false;
+    } else if (oGameData.nickNamePlayerOne.length > 10 || oGameData.nickNamePlayerTwo.length > 10) {
+        alert('Användarnamnen får inte överstiga 10 bokstäver');
+        return false;
+    }
+    else{
+        if (oGameData.colorPlayerOne === '#ffffff' || oGameData.colorPlayerTwo === '#ffffff') {
+            alert('Användaren får inte välja färgen vit');
+            return false;
+    } else if (oGameData.colorPlayerOne === '#000000' || oGameData.colorPlayerTwo === '#000000') {
+            alert('Användaren får inte välja färgen svart');
+            return false;
+    } else {
+            return true
+        }
+    }
+}
+
+function timer() {
+
 }
